@@ -1,5 +1,16 @@
 
 
+function gDriveCallback() {
+    chrome.identity.getAuthToken({interactive: true }, function(token){
+	if(chrome.runtime.lastError){
+	    alert(chrome.runtime.lastError.message);
+	    return;
+	}
+	console.log("token is " + token);
+    });
+}				 
+
+
 // Get images by sending message to content script attached to current tab
 function getAllImages(callback)  {
 
@@ -16,15 +27,15 @@ function getAllImages(callback)  {
 	    get: "images"
 	};
 	chrome.tabs.sendMessage(tab_id,msg, function(response) {
-	    // callback for sending data to google drive
-	    //callback(list)
-	    console.log("Received response");
-	    response.image_urls.forEach(function(image) {
+	    console.log("Received response for " + response.num_of_images + "images" );
+	   console.log(response.Images);
+	    response.Images.forEach(function(image) {
 		console.log(image);
+		//chrome identity and Drive API access token
+		gDriveCallback();
 	    });
 	});
     });
-//    callback();
 }
 
 
@@ -32,5 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     getAllImages(function() {
 	console.log("Received response from content script");
     });
+
+
 });
 

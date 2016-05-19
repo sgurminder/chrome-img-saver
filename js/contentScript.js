@@ -1,5 +1,5 @@
 
-var image_urls = [ ];
+var image_urls = [ ] ;
 function retrieveImages() {
     
     var images = document.images;
@@ -21,7 +21,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse){
 	retrieveImages()
 
 	//synchronous sendresponse
-	sendResponse(image_urls);
+	//sendResponse(image_urls);
+	sendResponse({"num_of_images" : image_urls.length ,"Images" : image_urls});
     }
 });
     
