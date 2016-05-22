@@ -16,6 +16,8 @@ function retrieveImages() {
 	return ;
     }
     image_urls.push(urls[0]);
+//    console.log(urls[32]);
+//    return;
     var j = 0;
     for(i = 1; i<urls.length; i++)
     {

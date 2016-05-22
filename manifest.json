@@ -15,7 +15,9 @@
 
      "permissions": [
 	 "activeTab",
-	 "identity"
+	 "identity",
+	 "downloads"
+
 	 ],
 
      "oauth2": {
