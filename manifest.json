@@ -3,7 +3,7 @@
 
      "name": "Image saver",
      "description": "Saves current open images to Google drive",
-     "version" : "1.0",
+     "version" : "1.2",
 
 
      "browser_action" : {
@@ -18,8 +18,8 @@
 	 ],
 
      "oauth2": {
-	 "client_id": "813937627219-6nbg34qr4pl51eos2979fq40n5s3rn62.apps.googleusercontent.com",
-	 "scopes": ["https://www.googleapis.com/auth/drive" ]
+	 "client_id": "813937627219-0hdh76nltmcmqt341k6cmb996309jgmf.apps.googleusercontent.com",
+	 "scopes": ["https://www.googleapis.com/auth/drive"]
      },
      "content_scripts": [
 	 {
