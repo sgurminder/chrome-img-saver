@@ -27,7 +27,9 @@
 	     "js": ["js/contentScript.js"]
 	 }
      ],
-     "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'"
+     "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'",
+     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnMygTeWJsjZSOx6JXw/jCP45WXEeEf3onfevJy+Wvpn++GTdUiXlqIdU7yVW139fSL6AOqJPj5YtXLU3BNlhbX3FT2x/uBe2SYKaB/gTr9yezHNWpK4YtD6+xNga+vFX7cAaFnfvNZbCgC/dxXxIjSGPWRpWcA14HG328JA/FdOU43mwMOd3ndhFr7yHwiB8ChxoBKmfRosivIXWM6pi8hwwZUyKeQJPM6S1+LVfBzOds9hwuU5WBwmkcvXIvICakY20LSr6nI+XduEu6iU0nSV1yNdNFJRZADdHQEAxZgeXSxLhggtkEuA+M0ZTL+1mEfyp5Md2oK+bQXz7RuWfqwIDAQAB"
+
 }
 
 
