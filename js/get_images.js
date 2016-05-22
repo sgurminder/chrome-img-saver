@@ -22,20 +22,33 @@ function get_or_create(name,mime,parent,callback){
 }
 
 function init() {
-
+//    chrome.identity.removeCachedAuthToken(authToken.access_token,function(){
+  //  console.log("removed token");
+   // });
     getToken();
-
+    
     function getToken() {
 	chrome.identity.getAuthToken({interactive: true}, function(t){
+	    console.log("inside getToken");
 	    if(chrome.runtime.lastError){
 		alert(chrome.runtime.lastError.message);
 		return;
 	    }
 	    authToken.access_token = t;
+	    //validate token 
 	    console.log("Loaded javscript client library");
 	    gapi.auth.setToken(authToken);
 	    gapi.client.load("drive","v3",function(){
-	
+		gapi.client.drive.files.list().execute(function(response){
+		    console.log(response.code);
+		    if(response.code == 401){
+			chrome.identity.removeCachedAuthToken({'token': t},function(){
+			    console.log("Removed token");
+			    getToken();
+			});
+		    }
+	    });
+
 		mime = "application/vnd.google-apps.folder";
 		var p = [];
 		get_or_create("Saved images",mime,p,function(id){

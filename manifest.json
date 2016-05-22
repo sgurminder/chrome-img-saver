@@ -1,5 +1,4 @@
  {
-
      "manifest_version" : 2,
 
      "name": "Image saver",
@@ -15,9 +14,7 @@
 
      "permissions": [
 	 "activeTab",
-	 "identity",
-	 "downloads"
-
+	 "identity"
 	 ],
 
      "oauth2": {
@@ -31,9 +28,6 @@
 	 }
      ],
      "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'"
-
-     
-
 }
 
 
