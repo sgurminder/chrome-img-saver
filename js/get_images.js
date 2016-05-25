@@ -22,9 +22,7 @@ function get_or_create(name,mime,parent,callback){
 }
 
 function init() {
-//    chrome.identity.removeCachedAuthToken(authToken.access_token,function(){
-  //  console.log("removed token");
-   // });
+
     getToken();
     
     function getToken() {
@@ -62,6 +60,12 @@ function init() {
     }
 }
 
+function onImageFetched_fetch(response){
+    console.log(response.url);
+    var nblob = response.blob();
+    console.log(nblob.type)
+}
+    
 
 
 function onImageFetched(e) {
@@ -81,14 +85,40 @@ function onImageFetched(e) {
 	}
 	var fileId = id;
 	const url = 'https://www.googleapis.com/upload/drive/v3/files/' + fileId + '?uploadType=media';
-	var xhr = new XMLHttpRequest();
-	xhr.open('PATCH',url);
-	xhr.setRequestHeader('Authorization', 'Bearer ' + authToken.access_token);
-	xhr.setRequestHeader('Content-Type', mime);
-	xhr.onload = result => {
-	    console.log("Saved to Google drive");
+	if(self.fetch){
+	    console.log("Fetch found, Using fetch");
+	    var setHeaders = new Headers();
+	    setHeaders.append('Authorization', 'Bearer ' + authToken.access_token);
+	    setHeaders.append('Content-Type', mime);
+	    
+	    var setOptions = {
+		method: 'PATCH',
+		headers: setHeaders,
+		body: blob
+	    };
+	    fetch(url,setOptions)
+		.then(response => { if(response.ok){
+		    console.log("save to google using fetch");
+		}
+				    else{
+					console.log("Response wast not ok");
+				    }
+				  })
+	    .catch(error => {
+		console.log("There is an error " + error.message);
+	    });
+	    
 	}
-	xhr.send(blob);
+	else{
+	    var xhr = new XMLHttpRequest();
+	    xhr.open('PATCH',url);
+	    xhr.setRequestHeader('Authorization', 'Bearer ' + authToken.access_token);
+	    xhr.setRequestHeader('Content-Type', mime);
+	    xhr.onload = result => {
+	    console.log("Saved to Google drive");
+	    }
+	    xhr.send(blob);
+	}
     });
 }
 
@@ -121,15 +151,79 @@ function getAllImages(callback)  {
 		chrome.tabs.sendMessage(tab_id,msg, function(response) {
 		    var images = response.Images;
 		    processImages();
+		    
 		    function processImages(){
 			if(images.length > 0){
 			    var image = images.shift();
 			    console.log(image);
-			    var xhr = new XMLHttpRequest();
-			    xhr.open('GET',image,true);
-			    xhr.responseType = 'blob';
-			    xhr.onload = onImageFetched;
-			    xhr.send();
+			    if(self.fetch){
+				var setOptions = {
+				    method: 'GET'
+				};
+				var u;
+				fetch(image,setOptions)
+				    .then(response => { 
+					if(response.ok){
+					    u = response.url;
+					    return response.blob();
+					}
+				    }).then(nblob => {
+					var mime = nblob.type;
+					var p =[];
+					p.push(currentId);
+					get_or_create(u,mime,p,function(id){
+					    if(mime == 'image/pjpeg'){
+						mime = 'image/jpeg';
+					    }
+					    var fileId = id;
+					    const url = 'https://www.googleapis.com/upload/drive/v3/files/' + fileId + '?uploadType=media';
+					    if(self.fetch){
+						console.log("Fetch found, Using fetch");
+						var setHeaders = new Headers();
+						setHeaders.append('Authorization', 'Bearer ' + authToken.access_token);
+						setHeaders.append('Content-Type', mime);
+						
+						var setOptions = {
+						    method: 'PATCH',
+						    headers: setHeaders,
+						    body: nblob
+						};
+						fetch(url,setOptions)
+						    .then(response => { if(response.ok){
+							console.log("save to google using fetch");
+						    }
+									else{
+									    console.log("Response wast not ok");
+									}
+								      })
+						    .catch(error => {
+							console.log("There is an error " + error.message);
+						    });
+						
+					    }
+					    else{
+						var xhr = new XMLHttpRequest();
+						xhr.open('PATCH',url);
+						xhr.setRequestHeader('Authorization', 'Bearer ' + authToken.access_token);
+						xhr.setRequestHeader('Content-Type', mime);
+						xhr.onload = result => {
+						    console.log("Saved to Google drive");
+						}
+						xhr.send(blob);
+					    }
+					});
+					
+				    }).catch(error => {
+					console.log("Found error " + error.message);
+				    });
+			    }
+			    else{
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET',image,true);
+				xhr.responseType = 'blob';
+				xhr.onload = onImageFetched;
+				xhr.send();
+			    }
 			}
 		    	setTimeout(processImages,1000);
 		    }
@@ -139,13 +233,3 @@ function getAllImages(callback)  {
 	});
     });
 }
-
-
-document.addEventListener('DOMContentLoaded', function() {
-//    init();
-//    getAllImages(function() {
-//	console.log("Received response from content script");
-  //  });
-
-});
-
